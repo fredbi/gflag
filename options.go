@@ -3,6 +3,7 @@ package gflag
 import "time"
 
 type (
+	// Option to tune the behavior of a generic flag.
 	Option func(*options)
 
 	options struct {
@@ -44,6 +45,8 @@ func defaultOptions(opts []Option) *options {
 
 // BytesIsBase64 adopts base64 encoding for flags of type []byte.
 // The default is to encode []byte as an hex-encoded string.
+//
+// Applies to: Value[[]byte]
 func BytesIsBase64(enabled bool) Option {
 	return func(o *options) {
 		if enabled {
@@ -55,6 +58,8 @@ func BytesIsBase64(enabled bool) Option {
 }
 
 // IntIsCount adopts count semantics for flags of type int.
+//
+// Applies to: Value[int]
 //
 // Count semantics mean that multiple flags without a given value increment a counter.
 // The default is to use plain integer.
@@ -72,6 +77,8 @@ func IntIsCount(enabled bool) Option {
 // that is, we accumulate multiple instances of the flag, each with a single value rather
 // than parsing a CSV list of values in a single flag.
 //
+// Applies to: SliceValue[string]
+//
 // The default is to use a CSV list of values ("slice" semantics).
 func StringSliceIsArray(enabled bool) Option {
 	return func(o *options) {
@@ -84,6 +91,8 @@ func StringSliceIsArray(enabled bool) Option {
 }
 
 // WithTimeFormats define the formats supported to parse time.
+//
+// Applies to: Value[time.Time], SliceValue[time.time], MapValue[time.Time]
 //
 // The first format specified will be used to render time values as strings.
 //

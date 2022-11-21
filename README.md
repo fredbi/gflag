@@ -10,9 +10,24 @@ Yet another CLI flags library that reuses the great package `github.com/spf13/pf
 
 This is not a fork, but an extension of the `pflag` functionality.
 
+## What does it bring?
+
+This package provides a unified approach to strongly typed flags, using go generics.
+
+This way, we developers no longer have to register CLI flags using dozen of type-specific methods
+
+The flag building logic is now consistent for single values, slices and maps of all types.
+
+All primitive types (yes, complex too!) are supported.
+
+All common types handled by `pflag` (`time.Duration`, `net.IP`, etc..) are also supported. I have also added `time.Time`.
+Slight variations in the semantics for a flag with a given underlying type may be fine-tuned with some options.
+
+There is an `extensions` sub-package to contribute custom flag types. This one is initially populated with a `byte-size` flag.
+
 ## About CLI flags
 
-There are quite many existing CLI flag handling libraries.
+There are quite many existing CLI flag handling libraries out there.
 
 The most popular one is (by a mile) `github.com/spf13/pflag` (originally forked from `githb.com/ogier/pflag`).
 
