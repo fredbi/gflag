@@ -5,6 +5,7 @@ import (
 	"encoding"
 	"fmt"
 	"net"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -56,7 +57,7 @@ func NewFlagMapValue[T FlaggablePrimitives | FlaggableTypes](addr *map[string]T,
 }
 
 // GetValue returns the underlying value of the flag.
-func (m MapValue[T]) GetMapValue() map[string]T {
+func (m MapValue[T]) GetValue() map[string]T {
 	return *m.Value
 }
 
@@ -146,160 +147,181 @@ func (m *MapValue[T]) set(strValues string) error {
 		if err != nil {
 			return err
 		}
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]bool:
 		mapValues, err := buildMapFromParser(strValues, strconv.ParseBool)
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]int:
 		mapValues, err := buildMapFromParser(strValues, intParser[int](0))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]int8:
 		mapValues, err := buildMapFromParser(strValues, intParser[int8](8))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]int16:
 		mapValues, err := buildMapFromParser(strValues, intParser[int16](16))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]int32:
 		mapValues, err := buildMapFromParser(strValues, intParser[int32](32))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]int64:
 		mapValues, err := buildMapFromParser(strValues, intParser[int64](64))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]uint:
 		mapValues, err := buildMapFromParser(strValues, uintParser[uint](0))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]uint16:
 		mapValues, err := buildMapFromParser(strValues, uintParser[uint16](16))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]uint32:
 		mapValues, err := buildMapFromParser(strValues, uintParser[uint32](32))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]uint64:
 		mapValues, err := buildMapFromParser(strValues, uintParser[uint64](64))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]float32:
 		mapValues, err := buildMapFromParser(strValues, floatParser[float32](32))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]float64:
 		mapValues, err := buildMapFromParser(strValues, floatParser[float64](64))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]complex64:
 		mapValues, err := buildMapFromParser(strValues, complexParser[complex64](64))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]complex128:
 		mapValues, err := buildMapFromParser(strValues, complexParser[complex128](128))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]time.Duration:
 		mapValues, err := buildMapFromParser(strValues, time.ParseDuration)
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]time.Time:
 		mapValues, err := buildMapFromParser(strValues, timeParser(m.timeFormats))
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]net.IP:
 		mapValues, err := buildMapFromParser(strValues, parseIP)
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]net.IPNet:
 		mapValues, err := buildMapFromParser(strValues, parseIPNet)
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	case *map[string]net.IPMask:
 		mapValues, err := buildMapFromParser(strValues, parseIPMask)
 		if err != nil {
 			return err
 		}
 
-		*v = mapValues
-		*m.Value = *cast[map[string]T](v)
+		for k, v := range *cast[map[string]T](&mapValues) {
+			(*m.Value)[k] = v
+		}
 	default:
 		panic(fmt.Sprintf("unsupported type: %T", v))
 	}
@@ -429,21 +451,31 @@ func readAsMap(in string) (map[string]string, error) {
 }
 
 func writeMapAsString(mapValues map[string]string) string {
-	var (
-		buf        bytes.Buffer
-		afterFirst bool
-	)
-
+	var buf bytes.Buffer
 	buf.WriteRune('[')
 
-	for k, v := range mapValues {
-		if !afterFirst {
-			buf.WriteRune(',')
-			afterFirst = true
-		}
+	// want stable output
+	orderedKeys := make([]string, 0, len(mapValues))
+	for k := range mapValues {
+		orderedKeys = append(orderedKeys, k)
+	}
+	sort.Strings(orderedKeys)
+
+	if len(orderedKeys) > 0 {
+		k := orderedKeys[0]
+		v := mapValues[k]
 		buf.WriteString(k)
 		buf.WriteRune('=')
 		buf.WriteString(v)
+
+		for _, k := range orderedKeys[1:] {
+			v := mapValues[k]
+
+			buf.WriteRune(',')
+			buf.WriteString(k)
+			buf.WriteRune('=')
+			buf.WriteString(v)
+		}
 	}
 
 	buf.WriteRune(']')

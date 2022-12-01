@@ -10,8 +10,13 @@ var _ pflag.Value = new(ByteSizeValue)
 // ByteSizeValue is used to pass human-readable byte sizes as flags.
 type ByteSizeValue uint64
 
-// NewByteSizeValue builds a ByteSizeValue.
-func NewByteSizeValue(defaultValue uint64, p *uint64) *ByteSizeValue {
+// NewByteSizeValue builds a ByteSizeValue on some existing uint64 pointer.
+//
+// If the given pointer is nil, a new uint64 is allocated.
+func NewByteSizeValue(p *uint64, defaultValue uint64) *ByteSizeValue {
+	if p == nil {
+		p = new(uint64)
+	}
 	*p = defaultValue
 
 	return (*ByteSizeValue)(p)
@@ -20,6 +25,11 @@ func NewByteSizeValue(defaultValue uint64, p *uint64) *ByteSizeValue {
 // String method for a bytesize (pflag value and stringer interface)
 func (b ByteSizeValue) String() string {
 	return byteSizeFormatter(b)
+}
+
+// GetValue returns the size in bytes as a uint64.
+func (b ByteSizeValue) GetValue() uint64 {
+	return uint64(b)
 }
 
 // Set the value of this bytesize (pflag value interfaces)
@@ -73,7 +83,7 @@ func ByteSizeVar(p *uint64, name string, defaultValue uint64, usage string) {
 
 // ByteSizeVarP is like ByteSize, and takes a shorthand for the flag name.
 func ByteSizeVarP(p *uint64, name, shorthand string, defaultValue uint64, usage string) {
-	v := NewByteSizeValue(defaultValue, p)
+	v := NewByteSizeValue(p, defaultValue)
 	_ = pflag.CommandLine.VarPF(v, name, shorthand, usage)
 }
 

@@ -74,7 +74,7 @@ func NewFlagValue[T FlaggablePrimitives | FlaggableTypes](addr *T, defaultValue 
 	}
 	*m.Value = defaultValue
 
-	// bool flag imply true when set without arg
+	// bool flag implies true when set without arg
 	v := any(m.Value)
 	if _, isBool := v.(*bool); isBool {
 		m.NoOptDefVal = "true"
@@ -89,6 +89,27 @@ func NewFlagValue[T FlaggablePrimitives | FlaggableTypes](addr *T, defaultValue 
 // GetValue returns the underlying value of the flag.
 func (m Value[T]) GetValue() T {
 	return *m.Value
+}
+
+func (m Value[T]) GetNoOptDefVal() string {
+	asAny := any(m.Value)
+	if withNoOpt, ok := asAny.(interface{ GetNoOptDefVal() string }); ok {
+		return withNoOpt.GetNoOptDefVal()
+	}
+
+	return m.NoOptDefVal
+}
+
+func (m Value[T]) IsBoolFlag() bool {
+	asAny := any(m.Value)
+	switch v := asAny.(type) {
+	case interface{ IsBoolFlag() bool }:
+		return v.IsBoolFlag()
+	case *bool:
+		return true
+	default:
+		return false
+	}
 }
 
 // String knows how to yield a string representation of type T.

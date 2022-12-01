@@ -59,8 +59,8 @@ func NewFlagSliceValue[T FlaggablePrimitives | FlaggableTypes](addr *[]T, defaul
 	return m
 }
 
-// GetSliceValue returns the underlying value of the flag.
-func (m SliceValue[T]) GetSliceValue() []T {
+// GetValue returns the underlying value of the flag.
+func (m SliceValue[T]) GetValue() []T {
 	return *m.Value
 }
 
