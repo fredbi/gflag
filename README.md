@@ -19,7 +19,7 @@
 >
 > The main idea is to simplify the pflag interface, with less things to remember about flag types.
 >
-> So this is not a fork or drop-in replacement, but an extension of the `pflag` functionality.
+> So this is not a fork or drop-in replacement, but rather an extension of the `pflag` functionality.
 
 ## Usage
 
@@ -43,7 +43,7 @@ fs.Var(intFlag, "integer",  "integer value")    // register the flag in pflag fl
 
 _ = fs.Parse([]string{"--integer", 10})         // parse command line arguments
 
-fmt.Println(intFlag.GetValue())
+fmt.Println(intFlag.GetValue())                 // the flag knows the type of the value
 ```
 
 With `pflag` this piece of code would look like:
@@ -62,7 +62,7 @@ fs.IntVar(&flagVal, "integer",  "integer value") // register the flag in pflag f
 
 _ = fs.Parse([]string{"--integer", 10})         // parse command line arguments
 
-fmt.Println(fs.GetInt("integer"))
+fmt.Println(fs.GetInt("integer"))               // has to know an integer type is expected
 ```
 
 You may take a look at [more examples](example_values_test.go), with slices and maps.
@@ -71,30 +71,23 @@ You may take a look at [more examples](example_values_test.go), with slices and 
 
 This package provides a unified approach to strongly typed flags, using go generics.
 
-This way, we no longer have to register CLI flags using dozen of type-specific methods.
+This way, we no longer have to register CLI flags using dozen of type-specific methods, just three:
+* `NewFlagValue()`: for scalar values
+* `NewFlagSliceValue()`: for flags as lists
+* `NewFlagMapValue()`: for flags as map (e.g. key=value pairs)
 
-The flag building logic is now consistent for single values, slices and maps of all types.
+The flag building logic is consistent for single values, slices and maps of all types.
 
-All primitive types (yes, complex too!) are supported.
-All common types handled by `pflag` (`time.Duration`, `net.IP`, etc..) are also supported.
-I have also added `time.Time`.
+* **All primitive types** (yes, complex too!) are supported.
+* All common types handled by `pflag` (`time.Duration`, `net.IP`, etc..) are also supported.
+* I have also added `time.Time`
+* Supprot extensions built for `pflag` (arbitrary types with the `pflag.Value` interface)
 
-Slight variations in the semantics for a flag with a given underlying type may be fine-tuned with some options.
+
+Variations in the semantics for a flag with a given underlying type may be fine-tuned with options.
+
 
 There is an `extensions` sub-package to contribute some more custom flag types. 
 This one is initially populated with a `byte-size` flag. See [the example](extensions/example_test.go).
 
-## About CLI flags
-
-There are quite many existing CLI flag handling libraries out there.
-
-The most popular one is (by a mile) `github.com/spf13/pflag` (originally forked from `githb.com/ogier/pflag`).
-
-It is used by other very popular packages `spf13/viper` and `spf13/cobra`.
-
-The second most popular (by number of imports by public repositories) is `github.com/jessevdk/go-flags`.
-
-The approach proposed by our package is built on top `github.com/spf13/pflag` and remains interoperable with other 
-great CLI-building libraries such as `viper` and `cobra`.
-
-[Various packages and approaches to dealing with flags](docs/approaches.md)
+## [About CLI flags](./docs/about.md)
