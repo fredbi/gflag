@@ -50,6 +50,11 @@ type (
 //
 // In order to cover the full range of semantics offered by the pflag package, some options are available.
 func NewFlagSliceValue[T FlaggablePrimitives | FlaggableTypes](addr *[]T, defaultValue []T, opts ...Option) *SliceValue[T] {
+	if addr == nil {
+		slice := make([]T, 0)
+		addr = &slice
+	}
+
 	m := &SliceValue[T]{
 		Value:   addr,
 		options: defaultOptions(opts),
@@ -64,7 +69,17 @@ func (m SliceValue[T]) GetValue() []T {
 	return *m.Value
 }
 
-func (m *SliceValue[T]) String() string {
+// Get() implements the flag.Getter interface for programs using this Value from the
+// standard "flag" package.
+func (m SliceValue[T]) Get() any {
+	return m.Value
+}
+
+func (m SliceValue[T]) String() string {
+	if m.Value == nil {
+		return ""
+	}
+
 	return writeAsSlice(m.GetSlice())
 }
 
@@ -92,11 +107,7 @@ func (m *SliceValue[T]) set(strValue string) error {
 	}
 
 	// handle multiple occurences of the same flag with append semantics
-	if err = m.append(slice...); err != nil {
-		return err
-	}
-
-	return nil
+	return m.append(slice...)
 }
 
 func (m *SliceValue[T]) Type() string {
@@ -397,7 +408,7 @@ func (m *SliceValue[T]) MarshalText() ([]byte, error) {
 	return []byte(m.String()), nil
 }
 
-// MarshalFlag implements go-flags Marshaller interface
+// MarshalFlag implements github.com/jessevdk/go-flags.Marshaler interface
 func (m *SliceValue[T]) MarshalFlag() (string, error) {
 	return m.String(), nil
 }
@@ -409,7 +420,7 @@ func (m *SliceValue[T]) UnmarshalText(text []byte) error {
 	return m.set(string(text))
 }
 
-// UnmarshalFlag implements go-flags Unmarshaller interface
+// UnmarshalFlag implements github.com/jessevdk/go-flags.Unmarshaler interface
 func (m *SliceValue[T]) UnmarshalFlag(value string) error {
 	value = strings.TrimPrefix(value, `[`)
 	value = strings.TrimSuffix(value, `]`)

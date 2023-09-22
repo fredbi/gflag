@@ -47,6 +47,11 @@ type (
 // It replaces pflag.StringToInt(), pflag.StringToInt64(), pflag.StringToString(). Being generic, it can build a map
 // of any type, e.g. map[string]net.IP, map[string]time.Duration, map[string]float64...
 func NewFlagMapValue[T FlaggablePrimitives | FlaggableTypes](addr *map[string]T, defaultValue map[string]T, opts ...Option) *MapValue[T] {
+	if addr == nil {
+		mm := make(map[string]T, 0)
+		addr = &mm
+	}
+
 	m := &MapValue[T]{
 		Value:   addr,
 		options: defaultOptions(opts),
@@ -61,7 +66,17 @@ func (m MapValue[T]) GetValue() map[string]T {
 	return *m.Value
 }
 
-func (m *MapValue[T]) String() string {
+// Get() implements the flag.Getter interface for programs using this Value from the
+// standard "flag" package.
+func (m MapValue[T]) Get() any {
+	return m.Value
+}
+
+func (m MapValue[T]) String() string {
+	if m.Value == nil {
+		return ""
+	}
+
 	return writeMapAsString(m.GetMap())
 }
 
@@ -81,11 +96,7 @@ func (m *MapValue[T]) Set(strValue string) error {
 	}
 
 	// handle multiple occurences of the same flag with append semantics
-	if err := m.set(strValue); err != nil {
-		return err
-	}
-
-	return nil
+	return m.set(strValue)
 }
 
 func (m *MapValue[T]) Type() string {
@@ -385,7 +396,7 @@ func (m *MapValue[T]) MarshalText() ([]byte, error) {
 	return []byte(m.String()), nil
 }
 
-// MarshalFlag implements go-flags Marshaller interface
+// MarshalFlag implements github.com/jessevdk/go-flags.Marshaler interface
 func (m *MapValue[T]) MarshalFlag() (string, error) {
 	return m.String(), nil
 }
@@ -394,15 +405,25 @@ func (m *MapValue[T]) UnmarshalText(text []byte) error {
 	text = bytes.TrimPrefix(text, []byte(`[`))
 	text = bytes.TrimSuffix(text, []byte(`]`))
 
+	if !m.changed {
+		// reset any default value
+		initial := make(map[string]T)
+		*m.Value = initial
+		if err := m.set(string(text)); err != nil {
+			return err
+		}
+
+		m.changed = true
+
+		return nil
+	}
+
 	return m.set(string(text))
 }
 
-// UnmarshalFlag implements go-flags Unmarshaller interface
+// UnmarshalFlag implements github.com/jessevdk/go-flags.Unmarshaler interface
 func (m *MapValue[T]) UnmarshalFlag(value string) error {
-	value = strings.TrimPrefix(value, `[`)
-	value = strings.TrimSuffix(value, `]`)
-
-	return m.set(value)
+	return m.UnmarshalText([]byte(value))
 }
 
 func buildMapFromParser[T any](strValue string, parser func(string) (T, error)) (map[string]T, error) {

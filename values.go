@@ -65,7 +65,7 @@ type (
 // In order to cover the full range of semantics offered by the pflag package, some options are available.
 func NewFlagValue[T FlaggablePrimitives | FlaggableTypes](addr *T, defaultValue T, opts ...Option) *Value[T] {
 	if addr == nil {
-		panic("NewFlagValue must take a valid pointer to T")
+		addr = new(T)
 	}
 
 	m := &Value[T]{
@@ -91,6 +91,10 @@ func (m Value[T]) GetValue() T {
 	return *m.Value
 }
 
+// GetNoOptDefVal returns the default value to consider whenever there is no argument added to the flag.
+//
+// Example:
+// for a Value[bool], NoOptDefVal defaults to "true".
 func (m Value[T]) GetNoOptDefVal() string {
 	asAny := any(m.Value)
 	if withNoOpt, ok := asAny.(interface{ GetNoOptDefVal() string }); ok {
@@ -100,6 +104,7 @@ func (m Value[T]) GetNoOptDefVal() string {
 	return m.NoOptDefVal
 }
 
+// IsBoolFlag indicates to the "flag" standard lib package that this is a boolean flag.
 func (m Value[T]) IsBoolFlag() bool {
 	asAny := any(m.Value)
 	switch v := asAny.(type) {
@@ -112,8 +117,18 @@ func (m Value[T]) IsBoolFlag() bool {
 	}
 }
 
+// Get implements the flag.Getter interface for programs using this Value from the
+// standard "flag" package.
+func (m Value[T]) Get() any {
+	return m.Value
+}
+
 // String knows how to yield a string representation of type T.
-func (m *Value[T]) String() string {
+func (m Value[T]) String() string {
+	if m.Value == nil {
+		return ""
+	}
+
 	asAny := any(m.Value)
 	switch v := asAny.(type) {
 	case pflag.Value:
@@ -383,7 +398,7 @@ func (m *Value[T]) Type() string {
 	}
 }
 
-// MarshalFlag implements go-flags Marshaller interface
+// MarshalFlag implements github.com/jessevdk/go-flags.Marshaler interface
 func (m *Value[T]) MarshalFlag() (string, error) {
 	return m.String(), nil
 }
@@ -392,7 +407,7 @@ func (m *Value[T]) MarshalText() ([]byte, error) {
 	return []byte(m.String()), nil
 }
 
-// UnmarshalFlag implements go-flags Unmarshaller interface
+// UnmarshalFlag implements github.com/jessevdk/go-flags.Unmarshaler interface
 func (m *Value[T]) UnmarshalFlag(value string) error {
 	return m.set(value)
 }
