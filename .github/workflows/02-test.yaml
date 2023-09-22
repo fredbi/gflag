@@ -6,7 +6,6 @@ on:
       - master
 jobs:
   test_config:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         go_version: ['1.19','1.20','1.21']
