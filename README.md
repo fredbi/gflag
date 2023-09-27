@@ -12,12 +12,12 @@
 
 `pflags` with generic types.
 
-> This is yet another CLI flags library...
+> OK so this is yet another CLI flags library...
 >
-> Let's not reinvent the wheel: this module reuses the great package `github.com/spf13/pflag`,
+> We do not reinvent the wheel: this module reuses the great package `github.com/spf13/pflag`,
 > with an interface built on go generics.
 >
-> The main idea is to simplify the pflag interface, with less things to remember about flag types.
+> The main idea is to simplify the `pflag` interface, with less things to remember about flag types.
 >
 > So this is not a fork or drop-in replacement, but rather an extension of the `pflag` functionality.
 
@@ -25,6 +25,9 @@
 
 This package is designed to be used together with `github.com/spf13/pflag`.
 All types created by `gflag` implement the `pflag.Value` interface.
+
+Use-case: build idiomatic `cobra` CLIs with a simpler declaration of flags.
+See how [go-cli](https://github.com/fredbi/go-cli) achieves this.
 
 ```go
 import (
@@ -46,7 +49,8 @@ _ = fs.Parse([]string{"--integer", 10})         // parse command line arguments
 fmt.Println(intFlag.GetValue())                 // the flag knows the type of the value
 ```
 
-With `pflag` this piece of code would look like:
+With `pflag` this piece of code would look very much similar.
+
 ```go
 import (
 	"fmt"
@@ -81,13 +85,13 @@ The flag building logic is consistent for single values, slices and maps of all 
 * **All primitive types** (yes, complex too!) are supported.
 * All common types handled by `pflag` (`time.Duration`, `net.IP`, etc..) are also supported.
 * I have also added `time.Time`
-* Supprot extensions built for `pflag` (arbitrary types with the `pflag.Value` interface)
+* Support any extension built for `pflag` (arbitrary types with the `pflag.Value` interface)
 
 
 Variations in the semantics for a flag with a given underlying type may be fine-tuned with options.
 
 
-There is an `extensions` sub-package to contribute some more custom flag types. 
-This one is initially populated with a `byte-size` flag. See [the example](extensions/example_test.go).
+There is an `extensions` sub-package to contribute some custom extra flag types. 
+It is now populated with a `byte-size` flag. See [the example](extensions/example_test.go).
 
 ## [About CLI flags](./docs/about.md)

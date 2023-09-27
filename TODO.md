@@ -1,4 +1,4 @@
 # TODOs
 
 * [ ] unit tests
-* [ ] doc cleanup & scrubbing for typos
+* [x] doc cleanup & scrubbing for typos
