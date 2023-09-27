@@ -5,7 +5,7 @@ on:
     branches:
       - master
 jobs:
-  test_config:
+  test:
     strategy:
       matrix:
         go_version: ['1.19','1.20','1.21']
@@ -19,7 +19,7 @@ jobs:
           stable: true
           check-latest: true
       - uses: actions/checkout@v3
-      - name: Test config package
+      - name: Test gflag package
         run: |
           DEPS="$(go list -deps ./...|grep 'fredbi/gflag')"
           go test \
