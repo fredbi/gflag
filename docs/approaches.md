@@ -5,8 +5,8 @@
 A search on [`pkg.go.dev`](https://pkg.go.dev/search?q=flag&m=) provides some insight about the many CLI flag parsing
 packages out there.
 
-| repository                             |:Imported by`*`:| Approach     | Distinctive features                              | Last published |
------------------------------------------------------------------------------------------------------------------------------------------------
+| repository                             | Imported by`*` | Approach     | Distinctive features                              | Last published |
+-----------------------------------------|---------------:|--------------|---------------------------------------------------|----------------|
 |`flag` (standard library)               | 278,354        | programmatic | Dead simple. Supports '-flag' or '--flag' styles. | 2023/09/06 |
 |`https://github.com/spf13/pflag`        | 29,126         | programmatic | Replaces `flag`. Supports POSIX style, e.g. '-xvf --flag'. | 2019/09/18 |
 |                                        |                |              | Arrays, maps & extra types. Extensible.           |            |
@@ -31,7 +31,7 @@ packages out there.
 
 > Comments by fredbi, as of 2023/09/26
 
-If we exclude the `pflag` standard library, usage of which is boosted by the eco-system of standard libraries,
+If we exclude the `flag` standard library, usage of which is boosted by the eco-system of standard libraries,
 `spf13/pflag` seems the most popular package,
 most likely due to the popularity of the companion packages `spf13/cobra` and `spf13/viper`.
 

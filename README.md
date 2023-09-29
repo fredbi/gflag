@@ -80,7 +80,8 @@ This way, we no longer have to register CLI flags using dozen of type-specific m
 * `NewFlagSliceValue()`: for flags as lists
 * `NewFlagMapValue()`: for flags as map (e.g. key=value pairs)
 
-The flag building logic is consistent for single values, slices and maps of all types.
+The flag building logic is **consistent** for single values, slices and maps of all types.
+Differences in semantics are handled with a set of `Option`s.
 
 * **All primitive types** (yes, complex too!) are supported.
 * All common types handled by `pflag` (`time.Duration`, `net.IP`, etc..) are also supported.
@@ -89,7 +90,6 @@ The flag building logic is consistent for single values, slices and maps of all 
 
 
 Variations in the semantics for a flag with a given underlying type may be fine-tuned with options.
-
 
 There is an `extensions` sub-package to contribute some custom extra flag types. 
 It is now populated with a `byte-size` flag. See [the example](extensions/example_test.go).
